@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../models/movie.dart';
-import '../parental_rating.dart';
+import '../../../models/movie.dart';
+import '../../../components/parental_rating.dart';
 
 class OrderDetails extends StatelessWidget {
   const OrderDetails({super.key, required this.movie, required this.session});

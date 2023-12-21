@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../components/checkout/order_button.dart';
-import '../../components/checkout/order_details.dart';
-import '../../components/checkout/payment_method.dart';
-import '../../components/checkout/payment_total.dart';
+import 'widgets/order_button.dart';
+import 'widgets/order_details.dart';
+import 'widgets/payment_method.dart';
+import 'widgets/payment_total.dart';
 import '../../models/movie.dart';
 
 class Checkout extends StatelessWidget {

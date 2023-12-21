@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bilheteria_panucci/components/classification.dart';
 
-import '../parental_rating.dart';
+import '../../../components/parental_rating.dart';
 
 class PosterCard extends StatelessWidget {
   const PosterCard(

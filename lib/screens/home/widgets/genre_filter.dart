@@ -1,10 +1,11 @@
-import 'package:bilheteria_panucci/logic/cubit/cubit_home/home_cubit.dart';
 
+
+import 'package:bilheteria_panucci/screens/home/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GenreFilter extends StatefulWidget {
-  final HomeCubit homeCubit;
-  const GenreFilter({Key? key, required this.homeCubit}) : super(key: key);
+  const GenreFilter({Key? key}) : super(key: key);
 
   @override
   State<GenreFilter> createState() => _GenreFilterState();
@@ -43,8 +44,8 @@ class _GenreFilterState extends State<GenreFilter> {
             onChanged: (String? value) {
               if (value != null) {
                 value == 'Todos'
-                    ? widget.homeCubit.getMovies()
-                    : widget.homeCubit.getMoviesByGenre(value);
+                    ? context.read<HomeCubit>().getMovies()
+                    : context.read<HomeCubit>().getMoviesByGenre(value);
                 setState(() {
                   dropdownValue = value;
                 });

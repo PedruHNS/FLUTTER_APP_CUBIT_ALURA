@@ -1,8 +1,8 @@
-import 'package:bilheteria_panucci/logic/cubit/cubit_home/home_cubit.dart';
+import 'package:bilheteria_panucci/screens/home/cubit/home_cubit.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:bilheteria_panucci/components/home/genre_filter.dart';
+import 'package:bilheteria_panucci/screens/home/widgets/genre_filter.dart';
 import 'package:bilheteria_panucci/components/movie_card.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,10 +15,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final HomeCubit _homeCubit = HomeCubit();
   @override
   void initState() {
-    _homeCubit.getMovies();
+    context.read<HomeCubit>().getMovies();
+
     super.initState();
   }
 
@@ -36,9 +36,8 @@ class _HomeState extends State<Home> {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
-              GenreFilter(homeCubit: _homeCubit),
+              const GenreFilter(),
               BlocBuilder<HomeCubit, HomeState>(
-                bloc: _homeCubit,
                 builder: (context, state) {
                   if (state is HomeLoadingState) {
                     return const SliverFillRemaining(
@@ -51,8 +50,9 @@ class _HomeState extends State<Home> {
                     if (state.movies.isEmpty) {
                       return const SliverFillRemaining(
                         child: Center(
-                            child: Text(
-                                'não exite filme deste gênero no momento')),
+                          child:
+                              Text('não exite filme deste gênero no momento'),
+                        ),
                       );
                     }
                     return SliverGrid.builder(
@@ -63,7 +63,12 @@ class _HomeState extends State<Home> {
                         mainAxisExtent: 320, //240
                       ),
                       itemBuilder: (context, index) {
-                        return MovieCard(movie: state.movies[index]);
+                        return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/movie',
+                                  arguments: state.movies[index]);
+                            },
+                            child: MovieCard(movie: state.movies[index]));
                       },
                       itemCount: state.movies.length,
                     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bilheteria_panucci/screens/checkout/checkout.dart';
 
-import '../../models/movie.dart';
+import '../../../models/movie.dart';
 
 class TabBarMovie extends StatelessWidget {
   const TabBarMovie({super.key, required this.movie});
