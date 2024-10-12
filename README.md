@@ -1,40 +1,105 @@
-![Mobile-Aplicando BLoC com Cubit](https://github.com/alura-cursos/3033-bloc-com-cubit/assets/22684176/a1b98f40-085b-4a5c-ab7d-757bda996730)
-
 # Flutter: aplicando BLoC com Cubit
 
 ## Implemente o gerenciador de estados BLoC com Cubit em seus projetos
+<p align="center">
+  <img width="460" height="300" src="/assets/to_readme/app_demo.gif">
+</p>
 
 Curso da escola Mobile que fala sobre o gerenciador de estados BLoC com Cubit para Flutter. Os temas abordados são: Padrão de projetos BLoC, BlocBuilder e BlocProvider. 
 
 ### Tópicos abordados no curso:
 
-- Conceitos de gerenciamento de estados
-- Introdução ao BLoC com Cubit
-- Arquivos de estado
-- Arquivos Cubit
-- Configuração de um projeto no padrão BLoC
-- Injeção de dependência com BLoC
+### State
+O `State` representa o estado atual do Cubit. Cada vez que o estado é alterado, o Cubit emite o novo estado para todos os ouvintes. O estado pode ser de qualquer tipo, desde tipos primitivos como `int` e `String`, até classes mais complexas.
 
-Este curso é indicado para pessoas desenvolvedoras que desejam aprender uma forma mais eficiente de gerenciar estados de seus aplicativos Flutter em sua jornada de desenvolvedor mobile. 
+Exemplo de estados:
+```dart
+sealed class HomeState {}
+final class HomeInitialState extends HomeState {}
+final class HomeLoadingState extends HomeState {}
+final class HomeSuccessState extends HomeState {
+    final List<Movie> movies;
+    HomeSuccessState({required this.movies});
+}
+final class HomeErrorState extends HomeState {
+    final String message;
+    HomeErrorState({required this.message});
+}
+```
 
-## Requisitos:
+### Cubit
+Um `Cubit` é uma classe que estende `Cubit<State>`, onde `State` é o tipo de estado que você deseja gerenciar. Dentro do Cubit, você define métodos que emitem novos estados em resposta a eventos ou ações do usuário.
 
-- Conhecimentos básicos de Flutter e Dart 
-- Android Studio ou VS Code (com plugins do Flutter e Dart instalados)
-- Conhecimento de gerenciamento de estados com Provider
-- É importante ter o Flutter na versão 3.7.9
+Exemplo de um Cubit simples:
+```dart
+class HomeCubit extends Cubit<HomeState> {
+    final HomeService _homeService = HomeService();
+    HomeCubit() : super(HomeInitialState());
 
-Com este curso, você não só aprenderá a implementar o BLoC com Cubit em projetos Flutter, mas também melhorará sua compreensão de gerenciamento de estados em geral. Comece agora e aprimore seus conhecimentos de Flutter!
+    Future<void> getMovies() async {
+        emit(HomeLoadingState());
 
-## 🛠️ Abrir e rodar o projeto
+        try {
+            if (state is HomeLoadingState) {
+                final movies = await _homeService.fetchMovies();
+                emit(HomeSuccessState(movies: movies));
+            }
+        } on Exception catch (_) {
+            emit(HomeErrorState(message: 'erro ao carregar filmes'));
+        }
+    }
+}
+```
 
-Aqui vem um passo a passo para abrir e rodar o projeto.
+### emit
+O método `emit` é usado dentro de um Cubit para emitir novos estados. Sempre que você deseja alterar o estado atual, você chama `emit` com o novo estado.
 
-- **Open an Existing Project** (ou alguma opção similar)
-- Procure o local onde o projeto está e o selecione (Caso o projeto seja baixado via zip, é necessário extraí-lo antes de procurá-lo)
-- Por fim clique em OK
-- Depois basta rodar o comando `flutter run` na pasta do projeto
+Exemplo de uso do `emit`:
+```dart
+emit(HomeLoadingState());
+```
 
-## 📚 Mais informações do curso
+### BlocBuilder
+O `BlocBuilder` é um widget que reconstrói sua interface do usuário em resposta a novos estados emitidos por um Cubit ou BLoC. Ele escuta as mudanças de estado e reconstrói a interface de acordo.
 
-Gostou do projeto e quer conhecer mais? Você pode [acessar o curso](link) que desenvolve o projeto desde o começo!
+Exemplo de uso do `BlocBuilder`:
+```dart
+BlocBuilder<HomeCubit, HomeState>(
+    builder: (context, state) {
+        if (state is HomeLoadingState) {
+            return CircularProgressIndicator();
+        } else if (state is HomeSuccessState) {
+            return ListView.builder(
+                itemCount: state.movies.length,
+                itemBuilder: (context, index) {
+                    return ListTile(
+                        title: Text(state.movies[index].title),
+                    );
+                },
+            );
+        } else if (state is HomeErrorState) {
+            return Text(state.message);
+        } else {
+            return Container();
+        }
+    },
+);
+```
+
+### BlocProvider
+O `BlocProvider` é um widget que fornece um Cubit ou BLoC para a árvore de widgets abaixo dele. Ele é usado para criar e disponibilizar o Cubit ou BLoC para os widgets filhos.
+
+Exemplo de uso do `BlocProvider`:
+```dart
+BlocProvider(
+    create: (context) => HomeCubit(),
+    child: MyHomePage(),
+);
+```
+
+
+
+
+
+
+
